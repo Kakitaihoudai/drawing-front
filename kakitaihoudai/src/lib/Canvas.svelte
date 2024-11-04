@@ -46,6 +46,12 @@
   function handleMouseOut() {
     isDrawing = false;
   }
+
+  function handleClearCanvas() {
+    if (ctx) {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+    }
+  }
   
   onMount(() => {
         setupCanvas();
@@ -68,5 +74,6 @@ style="border:1px solid black;">
 <input type="range" id="brushSize" bind:value={brushSize} min="1" max="100" />
 <label for="brushColor">Color</label>
 <input type="color" id="brushColor" bind:value={brushColor}/>
-
-
+<button on:click={handleClearCanvas}>CLEAR</button>
+<button>Save</button>
+<button>Save and Post</button>

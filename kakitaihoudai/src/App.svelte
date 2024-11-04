@@ -1,6 +1,8 @@
 <script lang="ts">
   // import svelteLogo from './assets/svelte.svg'
   import Canvas from './lib/Canvas.svelte';
+  import Login from './lib/Login.svelte';
+  let isLoggedIn = $state(false);
 </script>
 
 <main>
@@ -8,6 +10,10 @@
     <!-- <a href="https://svelte.dev" target="_blank" rel="noreferrer">
       <img src={svelteLogo} class="logo svelte" alt="Svelte Logo" />
     </a> -->
-    <Canvas />
+    {#if !isLoggedIn}
+      <Login bind:isLoggedIn/>
+    {:else}
+      <Canvas />
+    {/if}
   </div>
 </main>
