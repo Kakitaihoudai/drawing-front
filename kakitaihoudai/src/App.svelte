@@ -3,6 +3,7 @@
   import Canvas from './lib/Canvas.svelte';
   import Login from './lib/Login.svelte';
   let isLoggedIn = $state(false);
+  let currentUserId = $state(0);
 </script>
 
 <main>
@@ -11,9 +12,9 @@
       <img src={svelteLogo} class="logo svelte" alt="Svelte Logo" />
     </a> -->
     {#if !isLoggedIn}
-      <Login bind:isLoggedIn/>
+      <Login bind:isLoggedIn bind:currentUserId/>
     {:else}
-      <Canvas />
+      <Canvas currentUserId={currentUserId}/>
     {/if}
   </div>
 </main>

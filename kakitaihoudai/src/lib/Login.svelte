@@ -1,5 +1,5 @@
 <script lang="ts">
-  let { isLoggedIn = $bindable() } = $props();
+  let { isLoggedIn = $bindable(), currentUserId = $bindable() } = $props();
 
   const registerURL = import.meta.env.VITE_SERVER_URL + '/register';
   const loginURL = import.meta.env.VITE_SERVER_URL + '/login';
@@ -8,7 +8,7 @@
   let password = $state('');
   let confirmPassword = $state('');
 
-  async function register(username: string, password: string, confirmPassword: string) {
+  async function handleRegister(username: string, password: string, confirmPassword: string) {
     if (password === confirmPassword) {
         try {
             const response = await fetch(registerURL, {
@@ -34,7 +34,7 @@
     }
   }
 
-  async function login(username: string, password: string) {
+  async function handleLogin(username: string, password: string) {
     try {
         const response = await fetch(loginURL, {
             method: 'POST',
@@ -45,10 +45,14 @@
             });
         if (response.status === 200) {
             isLoggedIn = true;
+            if (response.body) {
+                const parsedRes = await response.json();
+                currentUserId = parsedRes.id;
+            }
         } else if (response.status === 401) {
             alert("Wrong password.");
         } else if (response.status === 404) {
-            alert("User not found.")
+            alert("User not found.");
         }
     } catch (error) {
         console.error('Error:', error);
@@ -56,6 +60,7 @@
   }
 </script>
 
+<!-- login page -->
 {#if loginOrReg === 'login'}
     <h1>Login</h1>
     <div>
@@ -71,8 +76,9 @@
         type="password"
         />
     </div>
-    <button onclick={() => login(username, password)}>Submit</button>
+    <button onclick={() => handleLogin(username, password)}>Submit</button>
     <button onclick={() => loginOrReg = 'reg'}>Register?</button>
+<!-- register page -->
 {:else if loginOrReg === 'reg'}
     <h1>Login</h1>
     <div>
@@ -95,5 +101,5 @@
         type="password"
         />
     </div>
-    <button onclick={() => register(username, password, confirmPassword)}>Register</button>
+    <button onclick={() => handleRegister(username, password, confirmPassword)}>Register</button>
 {/if}

@@ -1,14 +1,18 @@
 <script lang="ts">
   import { onMount } from "svelte";
 
+  let { currentUserId } = $props();
+
   let canvas: HTMLCanvasElement;
-  let ctx: CanvasRenderingContext2D | null = null;
+  let ctx: CanvasRenderingContext2D | null = $state(null);
 
   let isDrawing = false;
   let lastX = 0;
   let lastY = 0;
-  let brushSize = 5
-  let brushColor = "#000000"
+  let brushSize = $state(5);
+  let brushColor = $state("#000000");
+  let currentTitle = $state('');
+  const saveURL = import.meta.env.VITE_SERVER_URL + '/save-drawing';
 
   function setupCanvas() {
     ctx = canvas.getContext("2d");
@@ -19,10 +23,12 @@
     }
   }
 
-  $: if (ctx) {
-    ctx.lineWidth = brushSize;
-    ctx.strokeStyle = brushColor;
-  }
+  $effect(() => { 
+    if (ctx) {
+      ctx.lineWidth = brushSize;
+      ctx.strokeStyle = brushColor;
+    }
+  })
 
   function handleMouseDown(e: MouseEvent) {
     isDrawing = true;
@@ -52,6 +58,30 @@
         ctx.clearRect(0, 0, canvas.width, canvas.height);
     }
   }
+
+  async function handleSaveDrawing(title: string, userId: number) {
+    if (title === '') {
+      return alert('Please add a title.');
+    }
+    const base64Image = canvas.toDataURL("image/png");
+    try {
+      const response = await fetch(saveURL, {
+        method: 'POST',
+                headers: {
+               'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({title: title, content: base64Image, user_id: userId}),
+              });
+      if (response.status === 201) {
+        alert('Image saved.')
+        handleClearCanvas();
+      } else {
+        alert('Error savinf image.');
+      }
+    } catch (err) {
+      console.error('Error saving drawing: ', err);
+    }
+  }
   
   onMount(() => {
         setupCanvas();
@@ -63,10 +93,10 @@
 bind:this={canvas} 
 height="500" 
 width="500" 
-on:mousedown={handleMouseDown} 
-on:mousemove={handleMouseMove} 
-on:mouseup={handleMouseUp} 
-on:mouseout={handleMouseOut} 
+onmousedown={handleMouseDown} 
+onmousemove={handleMouseMove} 
+onmouseup={handleMouseUp} 
+onmouseout={handleMouseOut} 
 style="border:1px solid black;">
 </canvas>
 
@@ -74,6 +104,7 @@ style="border:1px solid black;">
 <input type="range" id="brushSize" bind:value={brushSize} min="1" max="100" />
 <label for="brushColor">Color</label>
 <input type="color" id="brushColor" bind:value={brushColor}/>
-<button on:click={handleClearCanvas}>CLEAR</button>
-<button>Save</button>
+<button onclick={handleClearCanvas}>CLEAR</button>
+<input type="text" placeholder="Please enter a title" bind:value={currentTitle}/>
+<button onclick={() => handleSaveDrawing(currentTitle, currentUserId as number)}>Save</button>
 <button>Save and Post</button>
