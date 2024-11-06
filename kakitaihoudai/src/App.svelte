@@ -6,7 +6,7 @@
 	let currentUserId: number = $state(0);
 </script>
 
-<main>
+<main class="max-h-svh">
 	<div>
 		<!-- <a href="https://svelte.dev" target="_blank" rel="noreferrer">
       <img src={svelteLogo} class="logo svelte" alt="Svelte Logo" />
@@ -14,7 +14,7 @@
 		{#if !isLoggedIn}
 			<Login bind:isLoggedIn bind:currentUserId />
 		{:else}
-			<div class="grid gap-4 [grid-template-columns:1fr_3fr]">
+			<div class="h-64 grid gap-4 [grid-template-columns:1fr_3fr]">
 				<Canvas {currentUserId} />
 			</div>
 		{/if}
