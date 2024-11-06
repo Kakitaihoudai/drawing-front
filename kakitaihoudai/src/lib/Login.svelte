@@ -65,14 +65,14 @@
 	<h1 class="py-10 text-5xl font-bold">Login</h1>
 	<div>
 		<input
-			class="mb-2 rounded border-2 border-solid border-black"
+			class="mb-2 rounded border-2 border-solid border-black p-1"
 			placeholder="Username"
 			bind:value={username}
 		/>
 	</div>
 	<div>
 		<input
-			class="mb-2 rounded border-2 border-solid border-black"
+			class="mb-2 rounded border-2 border-solid border-black p-1"
 			placeholder="Password"
 			bind:value={password}
 			type="password"
@@ -94,22 +94,27 @@
 {:else if loginOrReg === 'reg'}
 	<h1 class="py-10 text-5xl font-bold">Register</h1>
 	<div>
-		<input 
-        class="mb-2 rounded border-2 border-solid border-black"
-        placeholder="Username" bind:value={username} 
-        />
+		<input
+			class="mb-2 rounded border-2 border-solid border-black p-1"
+			placeholder="Username"
+			bind:value={username}
+		/>
 	</div>
 	<div>
-		<input 
-        class="mb-2 rounded border-2 border-solid border-black"
-        placeholder="Password" bind:value={password} type="password" 
-        />
+		<input
+			class="mb-2 rounded border-2 border-solid border-black p-1"
+			placeholder="Password"
+			bind:value={password}
+			type="password"
+		/>
 	</div>
 	<div>
-		<input 
-        class="mb-2 rounded border-2 border-solid border-black"
-        placeholder="Confirm Password" bind:value={confirmPassword} type="password" 
-        />
+		<input
+			class="mb-2 rounded border-2 border-solid border-black p-1"
+			placeholder="Confirm Password"
+			bind:value={confirmPassword}
+			type="password"
+		/>
 	</div>
 	<button
 		class="rounded border-2 border-solid border-black bg-slate-100 px-3 py-1 active:bg-slate-400"
