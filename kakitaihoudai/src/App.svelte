@@ -1,20 +1,22 @@
 <script lang="ts">
-  // import svelteLogo from './assets/svelte.svg'
-  import Canvas from './lib/Canvas.svelte';
-  import Login from './lib/Login.svelte';
-  let isLoggedIn = $state(false);
-  let currentUserId = $state(0);
+	// import svelteLogo from './assets/svelte.svg'
+	import Canvas from './lib/Canvas.svelte';
+	import Login from './lib/Login.svelte';
+	let isLoggedIn = $state(false);
+	let currentUserId: number = $state(0);
 </script>
 
 <main>
-  <div>
-    <!-- <a href="https://svelte.dev" target="_blank" rel="noreferrer">
+	<div>
+		<!-- <a href="https://svelte.dev" target="_blank" rel="noreferrer">
       <img src={svelteLogo} class="logo svelte" alt="Svelte Logo" />
     </a> -->
-    {#if !isLoggedIn}
-      <Login bind:isLoggedIn bind:currentUserId/>
-    {:else}
-      <Canvas currentUserId={currentUserId}/>
-    {/if}
-  </div>
+		{#if !isLoggedIn}
+			<Login bind:isLoggedIn bind:currentUserId />
+		{:else}
+			<div class="grid gap-4 [grid-template-columns:1fr_3fr]">
+				<Canvas {currentUserId} />
+			</div>
+		{/if}
+	</div>
 </main>
