@@ -5,10 +5,12 @@
 	let {
 		userDrawingsArr,
 		currentDrawing = $bindable()
-	}: { userDrawingsArr: Drawing[]; currentDrawing: {id: number, content: string} } = $props();
+	}: { userDrawingsArr: Drawing[]; currentDrawing: { id: number; content: string } } = $props();
 </script>
 
-<div class="mb-2 grid-cols-1 overscroll-y-auto rounded border-2 border-solid border-black">
+<div
+	class="max-h-full mb-2 overflow-y-scroll rounded border-2 border-solid border-black"
+>
 	{#each userDrawingsArr as drawing}
 		<!-- svelte-ignore a11y_click_events_have_key_events -->
 		<!-- svelte-ignore a11y_no_static_element_interactions -->

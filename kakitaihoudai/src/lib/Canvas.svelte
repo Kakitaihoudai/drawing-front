@@ -19,6 +19,7 @@
 	const saveURL = import.meta.env.VITE_SERVER_URL + '/save-drawing';
 	const drawingsURL = import.meta.env.VITE_SERVER_URL + '/my-drawings';
 	const updateURL = import.meta.env.VITE_SERVER_URL + '/update-drawing';
+	const deleteURL = import.meta.env.VITE_SERVER_URL + '/delete-drawing';
 
 	function setupCanvas() {
 		ctx = canvas.getContext('2d');
@@ -36,19 +37,19 @@
 		}
 	});
 
-	function handleMouseDown(e: MouseEvent) {
+	function handleMouseDown(event: MouseEvent) {
 		isDrawing = true;
-		[lastX, lastY] = [e.offsetX, e.offsetY];
+		[lastX, lastY] = [event.offsetX, event.offsetY];
 		canvas.focus();
 	}
 
-	function handleMouseMove(e: MouseEvent) {
+	function handleMouseMove(event: MouseEvent) {
 		if (!isDrawing || !ctx) return;
 		ctx.beginPath();
 		ctx.moveTo(lastX, lastY);
-		ctx.lineTo(e.offsetX, e.offsetY);
+		ctx.lineTo(event.offsetX, event.offsetY);
 		ctx.stroke();
-		[lastX, lastY] = [e.offsetX, e.offsetY];
+		[lastX, lastY] = [event.offsetX, event.offsetY];
 	}
 
 	function handleMouseUp() {
@@ -142,6 +143,23 @@
 		}
 	}
 
+	async function handleDeleteDrawing() {
+		const response = await fetch(deleteURL, {
+			method: 'DELETE',
+			headers: {
+				'Content-Type': 'application/json'
+			},
+			body: JSON.stringify({ id: currentDrawing.id })
+		});
+		if (response.status === 200) {
+			alert('Drawing has been deleted.');
+			currentDrawing.id = 0;
+			currentDrawing.content = '';
+			handleGetDrawings();
+			handleClearCanvas();
+		}
+	}
+
 	$effect(() => {
 		if (currentUserId > 0) {
 			handleGetDrawings();
@@ -185,6 +203,11 @@
 			handleClearCanvas();
 			currentDrawing.id = 0;
 		}}>CLEAR</button
+	>
+	<button
+		onclick={handleDeleteDrawing}
+		class="rounded border-2 border-solid border-black bg-slate-100 px-3 py-1 active:bg-slate-400"
+		>DELETE</button
 	>
 	<input
 		class="rounded border-2 border-solid border-black p-1"
