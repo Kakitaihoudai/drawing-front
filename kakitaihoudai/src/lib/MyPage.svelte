@@ -20,6 +20,7 @@
 	const drawingsURL = import.meta.env.VITE_SERVER_URL + '/my-drawings';
 	const updateURL = import.meta.env.VITE_SERVER_URL + '/update-drawing';
 	const deleteURL = import.meta.env.VITE_SERVER_URL + '/delete-drawing';
+	const postDrawingURL = import.meta.env.VITE_SERVER_URL + '/post-drawing';
 
 	function setupCanvas() {
 		ctx = canvas.getContext('2d');
@@ -160,6 +161,21 @@
 		}
 	}
 
+	async function handlePostDrawing() {
+		const response = await fetch(postDrawingURL, {
+			method: 'PATCH',
+			headers: {
+				'Content-Type': 'application/json'
+			},
+			body: JSON.stringify({ id: currentDrawing.id })
+		});
+		if (response.status === 200) {
+			alert('Drawing posted.');
+		} else {
+			alert('Error posting.');
+		}
+	}
+
 	$effect(() => {
 		if (currentUserId > 0) {
 			handleGetDrawings();
@@ -202,7 +218,7 @@
 		onclick={() => {
 			handleClearCanvas();
 			currentDrawing.id = 0;
-		}}>CLEAR</button
+		}}>CLEAR/NEW</button
 	>
 	<button
 		onclick={handleDeleteDrawing}
@@ -223,8 +239,16 @@
 			currentTitle = '';
 		}}>Save</button
 	>
-	<button
-		class="rounded border-2 border-solid border-black bg-slate-100 px-3 py-1 active:bg-slate-400"
-		>Save and Post</button
-	>
+	{#if currentDrawing.id !== 0}
+		<button
+			onclick={async () => {
+				await handlePostDrawing();
+				await handleSaveDrawing(currentTitle, currentUserId as number);
+				handleGetDrawings();
+				currentTitle = '';
+			}}
+			class="rounded border-2 border-solid border-black bg-slate-100 px-3 py-1 active:bg-slate-400"
+			>Save and Post</button
+		>
+	{/if}
 </div>
