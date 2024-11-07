@@ -2,7 +2,7 @@
 	let { isLoggedIn = $bindable(), myPageOrFront = $bindable() } = $props();
 </script>
 
-<div class="flex h-20 w-screen items-center bg-slate-600 bg-fixed p-4">
+<div class="flex h-20 w-screen items-center bg-slate-600 bg-fixed p-4 mb-1">
 	<!-- svelte-ignore a11y_click_events_have_key_events -->
 	<!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
 	<p

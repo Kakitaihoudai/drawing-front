@@ -3,6 +3,7 @@
 	import MyPage from './lib/MyPage.svelte';
 	import Login from './lib/Login.svelte';
 	import NavBar from './lib/NavBar.svelte';
+	import Front from './lib/Front.svelte';
 	let isLoggedIn = $state(false);
 	let currentUserId: number = $state(0);
 	let myPageOrFront: string = $state('mypage');
@@ -21,7 +22,7 @@
 				<MyPage {currentUserId} />
 			</div>
 		{:else if myPageOrFront === 'front'}
-			<p>Hello</p>
+			<Front {myPageOrFront}/>
 		{/if}
 	</div>
 </main>
