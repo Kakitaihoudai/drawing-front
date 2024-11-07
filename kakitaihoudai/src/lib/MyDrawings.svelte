@@ -18,7 +18,6 @@
 			class="cursor-pointer border-b-2 border-solid border-black p-2 active:bg-slate-400"
 			onclick={() => {
 				currentDrawing.id = drawing.id;
-				console.log(currentDrawing.id);
 				currentDrawing.content = drawing.content;
 			}}
 		>
