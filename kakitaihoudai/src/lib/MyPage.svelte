@@ -103,7 +103,6 @@
 			updateDrawing(base64Image);
 			//saving
 		} else {
-			console.log(currentDrawing.id);
 			if (title === '') {
 				return alert('Please add a title.');
 			}
