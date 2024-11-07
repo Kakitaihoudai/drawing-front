@@ -30,15 +30,20 @@
 	});
 </script>
 
-<div class="max-h-full w-full">
+<div class="w-full">
 	{#each postedArr as drawing}
-		<div class="grid place-items-center max-w-full">
+		<div class="grid max-w-full place-items-center">
 			<!-- svelte-ignore a11y_click_events_have_key_events -->
 			<!-- svelte-ignore a11y_no_static_element_interactions -->
-			<img alt={drawing.title} src={drawing.content} class="max-w-full border-double border-4 border-slate-600 mt-1" />
-			<div class="w-full border-b-2 border-solid border-black p-2 max-w-full">
+			<img
+				alt={drawing.title}
+				src={drawing.content}
+				class="mt-1 max-w-full border-4 border-double border-slate-600"
+			/>
+			<div class="w-full max-w-full border-b-2 border-solid border-black p-2">
 				<p class="text-4xl">{drawing.title}</p>
-				<p>{moment(drawing.updated_at).fromNow()}</p>
+				<p class="text-slate-400">by {drawing.author?.username}</p>
+				<p class="text-xl">{moment(drawing.updated_at).fromNow()}</p>
 			</div>
 		</div>
 	{/each}

@@ -9,4 +9,5 @@ export interface Drawing {
     user_id: number;
     likes: number;
     dislikes: number;
+    author?: {username: string}
 }
