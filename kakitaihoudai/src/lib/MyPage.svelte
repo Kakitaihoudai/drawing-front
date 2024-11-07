@@ -1,7 +1,8 @@
 <script lang="ts">
 	import MyDrawings from './MyDrawings.svelte';
-	import { onMount } from 'svelte';
+	import { onMount, onDestroy } from 'svelte';
 	import type { Drawing } from './types';
+	import toast from 'svelte-5-french-toast';
 
 	let { currentUserId }: { currentUserId: number } = $props();
 
@@ -11,6 +12,7 @@
 	let isDrawing = false;
 	let lastX = 0;
 	let lastY = 0;
+	let isDirty = false;
 	let brushSize = $state(5);
 	let brushColor = $state('#000000');
 	let currentTitle = $state('');
@@ -38,19 +40,32 @@
 		}
 	});
 
-	function handleMouseDown(event: MouseEvent) {
+	function getEventCoordinates(event: MouseEvent | TouchEvent): { x: number; y: number } {
+		if ('touches' in event) {
+			const touch = event.touches[0];
+			return {x: touch.clientX - canvas.offsetLeft, y: touch.clientY - canvas.offsetTop}
+		} else {
+			return { x: event.offsetX, y: event.offsetY };
+		}
+	}
+
+	function handleMouseDown(event: MouseEvent | TouchEvent) {
 		isDrawing = true;
-		[lastX, lastY] = [event.offsetX, event.offsetY];
+		const { x, y } = getEventCoordinates(event);
+		[lastX, lastY] = [x, y];
 		canvas.focus();
 	}
 
-	function handleMouseMove(event: MouseEvent) {
+	function handleMouseMove(event: MouseEvent | TouchEvent) {
 		if (!isDrawing || !ctx) return;
+		const { x, y } = getEventCoordinates(event);
 		ctx.beginPath();
 		ctx.moveTo(lastX, lastY);
-		ctx.lineTo(event.offsetX, event.offsetY);
+		ctx.lineTo(x, y);
 		ctx.stroke();
-		[lastX, lastY] = [event.offsetX, event.offsetY];
+		[lastX, lastY] = [x, y];
+		isDirty = true;
+		requestAnimationFrame(draw);
 	}
 
 	function handleMouseUp() {
@@ -59,6 +74,28 @@
 
 	function handleMouseOut() {
 		isDrawing = false;
+	}
+	
+	function handleTouchStart(event: TouchEvent) {
+		handleMouseDown(event);
+	}
+
+	function handleTouchMove(event: TouchEvent) {
+		handleMouseMove(event);
+	}
+
+	function draw() {
+		if (isDirty && ctx) {
+			ctx.beginPath();
+			ctx.moveTo(lastX, lastY);
+			ctx.lineTo(lastX, lastY);
+			ctx.stroke();
+			isDirty = false;
+		}
+	}
+
+	function handleTouchEnd() {
+		handleMouseUp();
 	}
 
 	function handleClearCanvas() {
@@ -85,11 +122,11 @@
 				body: JSON.stringify({ id: currentDrawing.id, content: newDrawing })
 			});
 			if (response.status === 204) {
-				alert('Drawing updated.');
+				toast.success('Drawing updated.');
 				handleClearCanvas();
 				currentDrawing.id = 0;
 			} else {
-				alert('Error updating drawing.');
+				toast.error('Error updating drawing.');
 			}
 		} catch (error) {
 			console.error('Error updating drawing: ', error);
@@ -104,7 +141,7 @@
 			//saving
 		} else {
 			if (title === '') {
-				return alert('Please add a title.');
+				return toast.error('Please add a title.');
 			}
 			try {
 				const response = await fetch(saveURL, {
@@ -115,11 +152,11 @@
 					body: JSON.stringify({ title: title, content: base64Image, user_id: userId })
 				});
 				if (response.status === 201) {
-					alert('Drawing saved.');
+					toast.success('Drawing saved.');
 					handleClearCanvas();
 					currentDrawing.id = 0;
 				} else {
-					alert('Error saving drawing.');
+					toast.error('Error saving drawing.');
 				}
 			} catch (err) {
 				console.error('Error saving drawing: ', err);
@@ -152,7 +189,7 @@
 			body: JSON.stringify({ id: currentDrawing.id })
 		});
 		if (response.status === 200) {
-			alert('Drawing has been deleted.');
+			toast.success('Drawing has been deleted.');
 			currentDrawing.id = 0;
 			currentDrawing.content = '';
 			handleGetDrawings();
@@ -169,9 +206,9 @@
 			body: JSON.stringify({ id: currentDrawing.id })
 		});
 		if (response.status === 200) {
-			alert('Drawing posted.');
+			toast.success('Drawing posted.');
 		} else {
-			alert('Error posting.');
+			toast.error('Error posting.');
 		}
 	}
 
@@ -190,6 +227,15 @@
 
 	onMount(() => {
 		setupCanvas();
+		canvas.addEventListener('touchstart', handleTouchStart, { passive: true });
+		canvas.addEventListener('touchmove', handleTouchMove, { passive: true });
+		canvas.addEventListener('touchend', handleTouchEnd, { passive: true });
+	});
+
+	onDestroy(() => {
+		canvas.removeEventListener('touchstart', handleTouchStart);
+		canvas.removeEventListener('touchmove', handleTouchMove);
+		canvas.removeEventListener('touchend', handleTouchEnd);
 	});
 </script>
 
@@ -204,7 +250,7 @@
 		onmousemove={handleMouseMove}
 		onmouseup={handleMouseUp}
 		onmouseout={handleMouseOut}
-		class="mb-2 rounded border-2 border-solid border-black"
+		class="mx-auto mb-2 rounded border-2 border-solid border-black"
 	>
 	</canvas>
 
