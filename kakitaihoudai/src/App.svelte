@@ -4,12 +4,14 @@
 	import Login from './lib/Login.svelte';
 	import NavBar from './lib/NavBar.svelte';
 	import Front from './lib/Front.svelte';
+	import toast, {Toaster} from 'svelte-5-french-toast'
 	let isLoggedIn = $state(false);
 	let currentUserId: number = $state(0);
 	let myPageOrFront: string = $state('mypage');
 </script>
 
 <main class="max-h-svh">
+	<Toaster />
 	<NavBar bind:isLoggedIn bind:myPageOrFront/>
 	<div>
 		<!-- <a href="https://svelte.dev" target="_blank" rel="noreferrer">

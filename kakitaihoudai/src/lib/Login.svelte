@@ -1,4 +1,5 @@
 <script lang="ts">
+	import toast from 'svelte-5-french-toast';
 	let { isLoggedIn = $bindable(), currentUserId = $bindable() } = $props();
 
 	const registerURL = import.meta.env.VITE_SERVER_URL + '/register';
@@ -19,18 +20,18 @@
 					body: JSON.stringify({ username: username, password: password })
 				});
 				if (response.status === 201) {
-					alert('User created successfully. Please login.');
+					toast.success('User created successfully. Please login.');
 					loginOrReg = 'login';
 				} else if (response.status === 400) {
-					alert('That username is taken. Please choose another.');
+					toast.error('That username is taken. Please choose another.');
 				} else {
-					alert('Server error.');
+					toast.error('Server error.');
 				}
 			} catch (error) {
 				console.error('Error:', error);
 			}
 		} else {
-			alert("Passwords don't match.");
+			toast.error("Passwords don't match.");
 		}
 	}
 
@@ -50,9 +51,9 @@
 					currentUserId = parsedRes.id;
 				}
 			} else if (response.status === 401) {
-				alert('Wrong password.');
+				toast.error('Wrong password.');
 			} else if (response.status === 404) {
-				alert('User not found.');
+				toast.error('User not found.');
 			}
 		} catch (error) {
 			console.error('Error:', error);

@@ -2,6 +2,7 @@
 	import MyDrawings from './MyDrawings.svelte';
 	import { onMount, onDestroy } from 'svelte';
 	import type { Drawing } from './types';
+	import toast from 'svelte-5-french-toast';
 
 	let { currentUserId }: { currentUserId: number } = $props();
 
@@ -74,7 +75,7 @@
 	function handleMouseOut() {
 		isDrawing = false;
 	}
-
+	
 	function handleTouchStart(event: TouchEvent) {
 		handleMouseDown(event);
 	}
@@ -121,11 +122,11 @@
 				body: JSON.stringify({ id: currentDrawing.id, content: newDrawing })
 			});
 			if (response.status === 204) {
-				alert('Drawing updated.');
+				toast.success('Drawing updated.');
 				handleClearCanvas();
 				currentDrawing.id = 0;
 			} else {
-				alert('Error updating drawing.');
+				toast.error('Error updating drawing.');
 			}
 		} catch (error) {
 			console.error('Error updating drawing: ', error);
@@ -140,7 +141,7 @@
 			//saving
 		} else {
 			if (title === '') {
-				return alert('Please add a title.');
+				return toast.error('Please add a title.');
 			}
 			try {
 				const response = await fetch(saveURL, {
@@ -151,11 +152,11 @@
 					body: JSON.stringify({ title: title, content: base64Image, user_id: userId })
 				});
 				if (response.status === 201) {
-					alert('Drawing saved.');
+					toast.success('Drawing saved.');
 					handleClearCanvas();
 					currentDrawing.id = 0;
 				} else {
-					alert('Error saving drawing.');
+					toast.error('Error saving drawing.');
 				}
 			} catch (err) {
 				console.error('Error saving drawing: ', err);
@@ -188,7 +189,7 @@
 			body: JSON.stringify({ id: currentDrawing.id })
 		});
 		if (response.status === 200) {
-			alert('Drawing has been deleted.');
+			toast.success('Drawing has been deleted.');
 			currentDrawing.id = 0;
 			currentDrawing.content = '';
 			handleGetDrawings();
@@ -205,9 +206,9 @@
 			body: JSON.stringify({ id: currentDrawing.id })
 		});
 		if (response.status === 200) {
-			alert('Drawing posted.');
+			toast.success('Drawing posted.');
 		} else {
-			alert('Error posting.');
+			toast.error('Error posting.');
 		}
 	}
 
